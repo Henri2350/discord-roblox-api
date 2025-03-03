@@ -49,18 +49,33 @@ module.exports = {
         .setName('그룹추방')
         .setDescription('로블록스 그룹에서 유저를 추방합니다.')
         .addStringOption(option => 
-            option.setName('유저id')
-                .setDescription('추방할 로블록스 유저 ID')
+            option.setName('유저명')
+                .setDescription('추방할 로블록스 유저 이름')
                 .setRequired(true)),
 
     async execute(interaction) {
-        const userId = interaction.options.getString('유저id');
+        const username = interaction.options.getString('유저명');
 
-        const result = await kickGroupMember(userId);
-        if (result) {
-            return interaction.reply({ content: `${userId} 유저가 그룹에서 추방되었습니다.` });
-        } else {
-            return interaction.reply({ content: '유저 그룹 추방에 실패했습니다.', ephemeral: true });
+        if (!username) {
+            return interaction.reply({ content: '유저 이름을 입력해 주세요.', ephemeral: true });
+        }
+
+        try {
+            // 유저 이름을 유저 ID로 변환
+            const userId = await noblox.getIdFromUsername(username);
+            if (!userId) {
+                return interaction.reply({ content: '유효하지 않은 유저 이름입니다.', ephemeral: true });
+            }
+
+            const result = await kickGroupMember(userId);
+            if (result) {
+                return interaction.reply({ content: `${username} 유저가 그룹에서 추방되었습니다.` });
+            } else {
+                return interaction.reply({ content: '유저 그룹 추방에 실패했습니다.', ephemeral: true });
+            }
+        } catch (error) {
+            console.error('❌ 그룹 추방 실패:', error);
+            return interaction.reply({ content: '유효하지 않은 유저 이름입니다.', ephemeral: true });
         }
     }
 };
