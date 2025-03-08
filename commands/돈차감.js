@@ -30,7 +30,11 @@ module.exports = {
             }
         } catch (error) {
             console.error(error);
-            await interaction.reply('돈 차감에 실패했습니다.');
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content: '돈 차감에 실패했습니다.', ephemeral: true });
+            } else {
+                await interaction.reply({ content: '돈 차감에 실패했습니다.', ephemeral: true });
+            }
         }
     },
 };

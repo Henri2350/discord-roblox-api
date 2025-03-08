@@ -12,10 +12,17 @@ module.exports = {
                 await command.execute(interaction);
             } catch (error) {
                 console.error(error);
-                await interaction.reply({ 
-                    content: '⚠️ 명령어 실행 중 오류가 발생했습니다!', 
-                    flags: MessageFlags.Ephemeral
-                });
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp({ 
+                        content: '⚠️ 명령어 실행 중 오류가 발생했습니다!', 
+                        ephemeral: true 
+                    });
+                } else {
+                    await interaction.reply({ 
+                        content: '⚠️ 명령어 실행 중 오류가 발생했습니다!', 
+                        ephemeral: true 
+                    });
+                }
             }
         } else if (interaction.isButton()) {
             if (interaction.customId === 'save_close') {
