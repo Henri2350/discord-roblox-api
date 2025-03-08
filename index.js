@@ -2,8 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const mongoose = require('mongoose');
-const express = require('express'); // Express 모듈 추가
-require('dotenv').config(); // dotenv 모듈 추가
+const express = require('express');
+require('dotenv').config();
+const axios = require('axios');
 
 // 환경 변수에서 가져오기
 const { DISCORD_TOKEN, MONGO_URI } = process.env;
@@ -60,7 +61,7 @@ mongoose.connect(MONGO_URI)
     .catch(err => console.error('❌ MongoDB 연결 실패:', err));
 
 // Express 서버 설정
-const port = process.env.PORT || 3001; // 포트를 3001로 변경
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
