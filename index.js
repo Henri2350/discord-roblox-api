@@ -6,7 +6,7 @@ const express = require('express'); // Express 모듈 추가
 require('dotenv').config(); // dotenv 모듈 추가
 
 // 환경 변수에서 가져오기
-const { DISCORD_TOKEN, mongoURI } = process.env;
+const { DISCORD_TOKEN, MONGO_URI } = process.env;
 
 // Express 앱 설정
 const app = express();
@@ -50,7 +50,7 @@ client.once('ready', async () => {
 });
 
 // ✅ MongoDB 연결 (경고 해결)
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGO_URI)
     .then(() => console.log('✅ MongoDB 연결 성공!'))
     .catch(err => console.error('❌ MongoDB 연결 실패:', err));
 
