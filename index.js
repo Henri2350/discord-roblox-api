@@ -60,7 +60,7 @@ mongoose.connect(MONGO_URI)
     .catch(err => console.error('❌ MongoDB 연결 실패:', err));
 
 // Express 서버 설정
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001; // 포트를 3001로 변경
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
