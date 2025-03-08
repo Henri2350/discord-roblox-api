@@ -10,7 +10,7 @@ module.exports = {
     
 
     adminRoleId: "870133999417303070", // 관리자 역할 ID
-    logChannelId: "123456789012345678", // 로그 채널 ID
+    logChannelId: "870243229868650506", // 로그 채널 ID
     allowedRoleId: '870146045571657799',// 일반 유저 역할 ID
 
     ticketPanelChannelId: "870249381612384257", // 민원 패널이 게시될 채널
