@@ -2,7 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const mongoose = require('mongoose');
-const { DISCORD_TOKEN, mongoURI } = require('./config');
+const express = require('express'); // Express 모듈 추가
+require('dotenv').config(); // dotenv 모듈 추가
+
+// 환경 변수에서 가져오기
+const { DISCORD_TOKEN, mongoURI } = process.env;
+
+// Express 앱 설정
+const app = express();
 
 // 봇 클라이언트 설정
 const client = new Client({
@@ -42,11 +49,16 @@ client.once('ready', async () => {
     await loginToRoblox(); // 🔹 로블록스 로그인 실행
 });
 
-
 // ✅ MongoDB 연결 (경고 해결)
-mongoose.connect(mongoURI)
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('✅ MongoDB 연결 성공!'))
     .catch(err => console.error('❌ MongoDB 연결 실패:', err));
+
+// Express 서버 설정
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
 // 봇 로그인
 client.login(DISCORD_TOKEN);
