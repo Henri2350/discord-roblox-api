@@ -11,6 +11,11 @@ const { DISCORD_TOKEN, MONGO_URI } = process.env;
 // Express 앱 설정
 const app = express();
 
+// 루트 경로 핸들러 추가
+app.get('/', (req, res) => {
+    res.send('Hello, world! Jeju Bot is running.');
+});
+
 // 봇 클라이언트 설정
 const client = new Client({
     intents: [
