@@ -1,13 +1,5 @@
 {
-  "name": "jeju-bot",
-  "version": "1.0.0",
-  "description": "Roblox Discord API",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
   "dependencies": {
-    "axios": "^1.8.2",
     "body-parser": "^1.20.3",
     "discord-html-transcripts": "^3.2.0",
     "discord.js": "^14.18.0",
@@ -15,10 +7,5 @@
     "express": "^4.21.2",
     "mongoose": "^8.11.0",
     "noblox.js": "^6.1.1"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "author": "",
-  "license": "ISC"
+  }
 }
