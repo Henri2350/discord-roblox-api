@@ -12,13 +12,16 @@ module.exports = {
                 await command.execute(interaction);
             } catch (error) {
                 console.error(error);
-                const errorResponse = {
-                    content: '⚠️ 명령어 실행 중 오류가 발생했습니다!',
-                    flags: MessageFlags.Ephemeral
-                };
-
+                
                 try {
-                    if (!interaction.deferred && !interaction.replied) {
+                    const errorResponse = {
+                        content: '⚠️ 명령어 실행 중 오류가 발생했습니다!',
+                        flags: MessageFlags.Ephemeral
+                    };
+
+                    if (interaction.deferred || interaction.replied) {
+                        await interaction.editReply(errorResponse);
+                    } else {
                         await interaction.reply(errorResponse);
                     }
                 } catch (e) {
