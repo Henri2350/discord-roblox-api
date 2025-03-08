@@ -11,10 +11,32 @@ const { DISCORD_TOKEN, MONGO_URI } = process.env;
 
 // Express 앱 설정
 const app = express();
+const port = process.env.PORT || 3001;
+
+app.use(express.json());
 
 // 루트 경로 핸들러 추가
 app.get('/', (req, res) => {
     res.send('Hello, world! Jeju Bot is running.');
+});
+
+// 로블록스 엔드포인트 설정
+app.post('/roblox-endpoint', (req, res) => {
+    const { username, amount, action } = req.body;
+
+    // 로블록스 게임 서버로 HTTP 요청 보내기
+    // 이 부분은 로블록스 게임 내에서 처리할 수 있도록 설정해야 합니다.
+    // 예를 들어, 로블록스 게임 서버에서 HTTP 요청을 받아서 처리하는 스크립트를 작성합니다.
+
+    console.log(`Received request: ${action} ${amount} for ${username}`);
+
+    // 요청 처리 결과를 반환합니다.
+    res.json({ success: true, message: 'Operation successful' });
+});
+
+// Express 서버 시작
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
 
 // 봇 클라이언트 설정
@@ -59,12 +81,6 @@ client.once('ready', async () => {
 mongoose.connect(MONGO_URI)
     .then(() => console.log('✅ MongoDB 연결 성공!'))
     .catch(err => console.error('❌ MongoDB 연결 실패:', err));
-
-// Express 서버 설정
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
 
 // 봇 로그인
 client.login(DISCORD_TOKEN);

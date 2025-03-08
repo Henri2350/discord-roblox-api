@@ -18,7 +18,7 @@ module.exports = {
         const amount = interaction.options.getInteger('amount');
 
         try {
-            const response = await axios.post('https://your-roblox-game-server-endpoint', {
+            const response = await axios.post('https://roblox-server-jeju.herokuapp.com/roblox-endpoint', {
                 username: username,
                 amount: amount,
                 action: 'subtract'
