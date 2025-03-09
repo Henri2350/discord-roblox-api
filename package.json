@@ -5,7 +5,7 @@
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.11.0",
+    "mongoose": "^8.12.1",
     "noblox.js": "^6.1.1"
   }
 }
