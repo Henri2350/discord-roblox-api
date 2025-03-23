@@ -48,8 +48,14 @@ module.exports = {
             { id: "schedule", label: "시간과 날짜 그리고 장소를 적어 주세요." },
             { id: "items", label: "집회에 사용할 물품은 무엇인가요?" }
         ],
-        "후원": [{ id: "support", label: "후원 내용을 적어 주세요." }],
-        "복구": [{ id: "proof", label: "본인임을 확인할 증거를 적어 주세요." }],
+        "후원": [
+            { id: "account", label: "계좌를 입력해 주세요." },
+            { id: "support", label: "뽑기인가요? 후원인가요? ( 증거 사진을 첨부 바랍니다. )" }
+        ],
+        "복구": [
+            { id: "proof", label: "본인임을 확인할 증거를 적어 주세요." },
+            { id: "account", label: "계좌를 입력해 주세요." }
+        ],
         "신고": [
             { id: "target", label: "신고 대상자 이름을 적어 주세요." },
             { id: "reason", label: "신고 사유를 적어 주세요." }
