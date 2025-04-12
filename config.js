@@ -20,6 +20,8 @@ module.exports = {
     // 로블록스 그룹 설정
     ROBLOX_GROUP_ID: process.env.ROBLOX_GROUP_ID,
     ROBLOX_COOKIE: process.env.ROBLOX_COOKIE,
+    UNIVERSE_ID: process.env.UNIVERSE_ID,
+
 
     // 문의 유형별 역할 ID 매칭
     ticketRoles: {
