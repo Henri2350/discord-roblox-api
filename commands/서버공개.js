@@ -1,4 +1,4 @@
-const { setGamePublicStatus } = require('../roblox');
+const { setGamePublicStatus } = require('../utils/roblox');
 
 module.exports = {
   data: {
