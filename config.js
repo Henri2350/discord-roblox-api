@@ -22,6 +22,7 @@ module.exports = {
     ROBLOX_COOKIE: process.env.ROBLOX_COOKIE,
     UNIVERSE_ID: process.env.UNIVERSE_ID,
 
+    
 
     // 문의 유형별 역할 ID 매칭
     ticketRoles: {

@@ -60,30 +60,32 @@ async function getCSRFToken() {
 async function setGamePublicStatus(isPublic) {
     try {
         const token = await getCSRFToken();
+        const universeId = config.ROBLOX_UNIVERSE_ID;
 
-        const res = await axios.patch(
-            `https://develop.roblox.com/v1/universes/${config.UNIVERSE_ID}`,
+        const response = await axios.patch(
+            `https://develop.roblox.com/v1/universes/${universeId}/configuration`,
             {
-                isPublic,
-                isArchived: false
+                isEnabled: isPublic
             },
             {
                 headers: {
                     'Content-Type': 'application/json',
                     'x-csrf-token': token,
-                    Cookie: `.ROBLOSECURITY=${config.ROBLOX_COOKIE}`
+                    'Cookie': `.ROBLOSECURITY=${config.ROBLOX_COOKIE}`
                 },
                 validateStatus: () => true
             }
         );
 
-        return res.status === 200;
+        console.log('📦 Roblox 응답:', response.data);
+        return response.status === 200;
     } catch (error) {
-        console.error('❌ 서버 공개/비공개 설정 실패:', error);
+        console.error('❌ 서버 공개/비공개 실패:', error.response?.data || error.message);
         return false;
     }
 }
 
+// ✅ 모듈 내보내기
 module.exports = {
     loginToRoblox,
     acceptGroupRequest,

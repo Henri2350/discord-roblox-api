@@ -1,10 +1,10 @@
+const { SlashCommandBuilder } = require('discord.js');
 const { setGamePublicStatus } = require('../utils/roblox');
 
 module.exports = {
-  data: {
-    name: '서버공개',
-    description: '로블록스 게임을 공개 상태로 전환합니다.',
-  },
+  data: new SlashCommandBuilder()
+    .setName('서버공개')
+    .setDescription('로블록스 게임을 공개 상태로 전환합니다.'),
   async execute(interaction) {
     const success = await setGamePublicStatus(true);
     if (success) {
