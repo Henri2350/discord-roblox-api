@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const axios = require('axios');
 const { EmbedBuilder } = require('discord.js');
+require('dotenv').config();
 
 /**
  * 게임 가시성 설정을 개별적으로 변경하는 함수
@@ -62,12 +63,20 @@ async function setGameVisibility(cookie, xcsrfToken, universeId, isPublic) {
         }
 
         // 각 설정을 개별적으로 변경
-        const settings = [
-            { isPublic },
-            { isForSale: true },
-            { allowPrivateServers: true },
-            { privateServerPrice: 0 }
-        ];
+        const settings = [];
+        
+        // 공개 설정
+        settings.push({ isPublic });
+        
+        if (isPublic) {
+            // 공개 시 추가 설정
+            settings.push({ isForSale: true });
+            settings.push({ allowPrivateServers: true });
+            settings.push({ privateServerPrice: 0 });
+        } else {
+            // 비공개 시 설정
+            settings.push({ isForSale: false });
+        }
 
         const results = [];
         let allSuccess = true;
@@ -132,10 +141,6 @@ module.exports = {
         .addBooleanOption(option => 
             option.setName('공개여부')
                 .setDescription('게임을 공개할지 여부를 설정합니다')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('쿠키')
-                .setDescription('ROBLOSECURITY 쿠키')
                 .setRequired(true)),
 
     async execute(interaction) {
@@ -144,10 +149,17 @@ module.exports = {
 
         try {
             const isPublic = interaction.options.getBoolean('공개여부');
-            const cookie = interaction.options.getString('쿠키');
             
-            // 유니버스 ID 설정 (필요에 따라 변경)
-            const universeId = 4063004005;  // 오류 메시지에서 가져온 ID
+            // .env 파일에서 쿠키 가져오기
+            const cookie = process.env.ROBLOX_COOKIE;
+            if (!cookie) {
+                return await interaction.editReply({ 
+                    content: '⚠️ 환경 변수에서 ROBLOX_COOKIE를 찾을 수 없습니다. .env 파일을 확인해주세요.' 
+                });
+            }
+            
+            // 유니버스 ID 설정 (필요에 따라 변경하거나 .env에서 가져올 수 있음)
+            const universeId = process.env.UNIVERSE_ID || 4063004005;
             
             // CSRF 토큰 가져오기
             const xcsrfToken = await getCSRFToken(cookie);
@@ -162,7 +174,7 @@ module.exports = {
             
             if (result.success) {
                 const embed = new EmbedBuilder()
-                    .setTitle('✅ 게임 공개 설정 변경 성공')
+                    .setTitle('✅ 게임 설정 변경 성공')
                     .setDescription(`게임이 성공적으로 ${isPublic ? '공개' : '비공개'}로 설정되었습니다.`)
                     .setColor('#00FF00')
                     .setTimestamp();
@@ -171,7 +183,7 @@ module.exports = {
             } else {
                 // 실패 시 상세 정보 표시
                 const embed = new EmbedBuilder()
-                    .setTitle('❌ 게임 공개 설정 변경 실패')
+                    .setTitle('❌ 게임 설정 변경 실패')
                     .setDescription(`게임 ${isPublic ? '공개' : '비공개'} 설정에 실패했습니다.`)
                     .addFields(
                         { name: '오류', value: result.error || '알 수 없는 오류' },

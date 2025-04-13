@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const axios = require('axios');
 const { EmbedBuilder } = require('discord.js');
+require('dotenv').config();
 
 /**
  * 게임 가시성 설정을 개별적으로 변경하는 함수
@@ -60,12 +61,9 @@ async function setGamePrivate(cookie, xcsrfToken, universeId) {
             };
         }
 
-        // 게임을 비공개로 설정
-        const isPublic = false;
-        
         // 각 설정을 개별적으로 변경
         const settings = [
-            { isPublic },
+            { isPublic: false },
             { isForSale: false }  // 비공개 시 판매도 비활성화
         ];
 
@@ -128,21 +126,23 @@ async function getCSRFToken(cookie) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('서버비공개')
-        .setDescription('게임을 비공개로 설정합니다')
-        .addStringOption(option =>
-            option.setName('쿠키')
-                .setDescription('ROBLOSECURITY 쿠키')
-                .setRequired(true)),
+        .setDescription('게임을 비공개로 설정합니다'),
 
     async execute(interaction) {
         // 상호작용 지연 응답
         await interaction.deferReply({ ephemeral: true });
 
         try {
-            const cookie = interaction.options.getString('쿠키');
+            // .env 파일에서 쿠키 가져오기
+            const cookie = process.env.ROBLOX_COOKIE;
+            if (!cookie) {
+                return await interaction.editReply({ 
+                    content: '⚠️ 환경 변수에서 ROBLOX_COOKIE를 찾을 수 없습니다. .env 파일을 확인해주세요.' 
+                });
+            }
             
-            // 유니버스 ID 설정 (필요에 따라 변경)
-            const universeId = 4063004005;  // 오류 메시지에서 가져온 ID
+            // 유니버스 ID 설정 (필요에 따라 변경하거나 .env에서 가져올 수 있음)
+            const universeId = process.env.UNIVERSE_ID || 4063004005;
             
             // CSRF 토큰 가져오기
             const xcsrfToken = await getCSRFToken(cookie);
