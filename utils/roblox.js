@@ -56,29 +56,64 @@ async function getCSRFToken() {
     return res.headers['x-csrf-token'];
 }
 
-// ✅ 게임 공개/비공개 설정
+// ✅ 게임 설정 가져오기
+async function getGameConfiguration() {
+    const universeId = config.ROBLOX_UNIVERSE_ID;
+    const response = await axios.get(`https://develop.roblox.com/v1/universes/${universeId}/configuration`, {
+        headers: {
+            Cookie: `.ROBLOSECURITY=${config.ROBLOX_COOKIE}`
+        }
+    });
+    return response.data;
+}
+
+// ✅ 게임 설정 저장하기
+async function saveGameConfiguration(updatedSettings) {
+    const token = await getCSRFToken();
+    const universeId = config.ROBLOX_UNIVERSE_ID;
+
+    const response = await axios.patch(
+        `https://develop.roblox.com/v1/universes/${universeId}/configuration`,
+        updatedSettings,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'x-csrf-token': token,
+                'Cookie': `.ROBLOSECURITY=${config.ROBLOX_COOKIE}`
+            },
+            validateStatus: () => true
+        }
+    );
+
+    if (response.status === 200) {
+        return { success: true, data: response.data };
+    } else {
+        const errorDetails = response.data?.errors?.map(e => e.message).join(', ') || '알 수 없는 오류';
+        return { success: false, error: errorDetails };
+    }
+}
+
+// ✅ 게임 공개/비공개 설정 (최종 저장 포함)
 async function setGamePublicStatus(isPublic) {
     try {
-        const token = await getCSRFToken();
-        const universeId = config.ROBLOX_UNIVERSE_ID;
+        const currentSettings = await getGameConfiguration();
 
-        const response = await axios.patch(
-            `https://develop.roblox.com/v1/universes/${universeId}/configuration`,
-            {
-                isEnabled: isPublic
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-csrf-token': token,
-                    'Cookie': `.ROBLOSECURITY=${config.ROBLOX_COOKIE}`
-                },
-                validateStatus: () => true
-            }
-        );
+        const updatedSettings = {
+            ...currentSettings,
+            isPublic: isPublic,
+            isForSale: isPublic,
+            privateServerPrice: 0,
+            allowPrivateServers: true
+        };
 
-        console.log('📦 Roblox 응답:', response.data);
-        return response.status === 200;
+        const result = await saveGameConfiguration(updatedSettings);
+        if (result.success) {
+            console.log(`✅ 게임 ${isPublic ? '공개' : '비공개'}로 설정 완료`);
+            return true;
+        } else {
+            console.error('❌ 설정 저장 실패:', result.error);
+            return false;
+        }
     } catch (error) {
         console.error('❌ 서버 공개/비공개 실패:', error.response?.data || error.message);
         return false;
@@ -91,5 +126,8 @@ module.exports = {
     acceptGroupRequest,
     declineGroupRequest,
     kickGroupMember,
-    setGamePublicStatus
+    setGamePublicStatus,
+    getCSRFToken,
+    getGameConfiguration,
+    saveGameConfiguration
 };
