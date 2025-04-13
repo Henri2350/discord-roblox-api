@@ -1,39 +1,81 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { setGamePublicStatus } = require('../utils/roblox');
-const config = require('../config');
+const { SlashCommandBuilder } = require('discord.js');
+const axios = require('axios');
+const config = require('../config.js');
+
+async function setGameVisibility(universeId, isPublic) {
+    try {
+        // API 엔드포인트
+        const url = `https://develop.roblox.com/v1/universes/${universeId}/configuration`;
+        
+        // 요청 헤더
+        const headers = {
+            'Content-Type': 'application/json',
+            'Cookie': `.ROBLOSECURITY=${config.ROBLOX_COOKIE}`,
+            'X-CSRF-TOKEN': await getCSRFToken()
+        };
+        
+        // 요청 데이터 (isPublic 값에 따라 달라짐)
+        const data = {
+            allowPrivateServers: true,  // 기본값 유지
+            privateServerPrice: 0,      // 기본값 유지
+            isForSale: true,            // 기본값 유지
+            isPublic: isPublic          // 공개 여부 설정
+        };
+        
+        // PATCH 요청 보내기
+        const response = await axios.patch(url, data, { headers });
+        return response.status === 200;
+    } catch (error) {
+        console.error('게임 공개 설정 변경 실패:', error);
+        return false;
+    }
+}
+
+// CSRF 토큰 가져오기
+async function getCSRFToken() {
+    try {
+        const response = await axios.post('https://auth.roblox.com/v2/logout', {}, {
+            headers: {
+                'Cookie': `.ROBLOSECURITY=${config.ROBLOX_COOKIE}`
+            }
+        });
+        return response.headers['x-csrf-token'];
+    } catch (error) {
+        // 401 에러가 발생하면 CSRF 토큰이 헤더에 포함됨
+        if (error.response && error.response.status === 403) {
+            return error.response.headers['x-csrf-token'];
+        }
+        throw error;
+    }
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('서버공개')
-        .setDescription('로블록스 서버를 공개 상태로 변경합니다.')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-    
+        .setDescription('로블록스 서버를 공개로 설정합니다.'),
+
     async execute(interaction) {
-        await interaction.deferReply({ ephemeral: true });
-        
-        // 명령어를 실행한 사용자가 권한이 있는지 확인
-        if (!config.AUTHORIZED_USERS.includes(interaction.user.id)) {
-            return interaction.editReply('⛔ 이 명령어를 실행할 권한이 없습니다.');
+        const member = interaction.member;
+
+        // 관리자 권한 확인
+        if (!member.roles.cache.has(config.adminRoleId)) {
+            return interaction.reply({ content: '🚫 이 명령어를 사용할 권한이 없습니다.', ephemeral: true });
         }
-        
+
+        // 로딩 메시지 표시
+        await interaction.deferReply();
+
         try {
-            // 로블록스 서버 공개 상태로 변경 API 호출
-            const success = await setGamePublicStatus(true);
+            const success = await setGameVisibility(config.UNIVERSE_ID, true);
             
             if (success) {
-                await interaction.editReply('✅ 서버가 공개 상태로 변경되었습니다.');
-                
-                // 로그 채널에 알림
-                const logChannel = interaction.client.channels.cache.get(config.LOG_CHANNEL_ID);
-                if (logChannel) {
-                    await logChannel.send(`🔓 ${interaction.user.tag}님이 서버를 공개 상태로 변경했습니다.`);
-                }
+                return interaction.editReply(`✅ 로블록스 서버가 공개로 설정되었습니다!`);
             } else {
-                await interaction.editReply('❌ 서버 상태 변경에 실패했습니다. 로그를 확인해주세요.');
+                return interaction.editReply({ content: `❌ 서버 공개 설정에 실패했습니다.` });
             }
         } catch (error) {
-            console.error('❌ 서버 공개 설정 중 오류 발생:', error);
-            await interaction.editReply('❌ 서버 공개 설정 중 오류가 발생했습니다. 로그를 확인해주세요.');
+            console.error('서버 공개 설정 오류:', error);
+            return interaction.editReply({ content: `❌ 오류가 발생했습니다: ${error.message}` });
         }
-    },
+    }
 };
