@@ -1,30 +1,31 @@
 require('dotenv').config();
 
 module.exports = {
+    // ✅ 디스코드 & 몽고DB 설정
     discordToken: process.env.DISCORD_TOKEN,
     clientId: process.env.CLIENT_ID,
     guildId: process.env.GUILD_ID,
     mongoURI: process.env.MONGO_URI,
+
+    // ✅ 로블록스 설정
     robloxGroupId: process.env.ROBLOX_GROUP_ID,
     robloxCookie: process.env.ROBLOX_COOKIE,
-    
-
-    adminRoleId: "870133999417303070", // 관리자 역할 ID
-    logChannelId: "870243229868650506", // 로그 채널 ID
-    allowedRoleId: '870146045571657799',// 일반 유저 역할 ID
-
-    ticketPanelChannelId: "870249381612384257", // 민원 패널이 게시될 채널
-    ticketCategoryId: "870240891527381053", // 티켓이 생성될 카테고리
-    ticketLogChannelId: "878563297769689118", // 티켓 저장 로그 채널
-
-    // 로블록스 그룹 설정
-    ROBLOX_GROUP_ID: process.env.ROBLOX_GROUP_ID,
-    ROBLOX_COOKIE: process.env.ROBLOX_COOKIE,
     UNIVERSE_ID: process.env.UNIVERSE_ID,
 
-    
+    // ✅ API 서버 포트 설정 (기본값: 3000)
+    API_PORT: process.env.API_PORT || 3000,
 
-    // 문의 유형별 역할 ID 매칭
+    // ✅ 관리자/역할 ID들
+    adminRoleId: "870133999417303070",
+    logChannelId: "870243229868650506",
+    allowedRoleId: '870146045571657799',
+
+    // ✅ 티켓 관련 ID들
+    ticketPanelChannelId: "870249381612384257",
+    ticketCategoryId: "870240891527381053",
+    ticketLogChannelId: "878563297769689118",
+
+    // ✅ 문의 유형별 역할 ID
     ticketRoles: {
         "기타": "1127621910944034987",
         "사업": "1127621912286208091",
@@ -34,7 +35,7 @@ module.exports = {
         "신고": "870133999417303070"
     },
 
-    // 문의 유형별 질문
+    // ✅ 문의 유형별 질문 목록
     ticketQuestions: {
         "기타": [{ id: "reason", label: "티켓을 오픈하는 이유를 작성해 주세요." }],
         "사업": [
