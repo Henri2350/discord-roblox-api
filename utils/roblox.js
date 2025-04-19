@@ -1,4 +1,3 @@
-require('dotenv').config(); // .env 파일을 로드합니다.
 const noblox = require('noblox.js');
 const axios = require('axios');
 const config = require('../config.js');
