@@ -1,3 +1,4 @@
+require('dotenv').config(); // 맨 위에 있어야 함
 const noblox = require('noblox.js');
 const axios = require('axios');
 const config = require('../config.js');
