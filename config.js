@@ -8,9 +8,10 @@ module.exports = {
     mongoURI: process.env.MONGO_URI,
 
     // ✅ 로블록스 설정
-    robloxGroupId: process.env.ROBLOX_GROUP_ID,
-    robloxCookie: process.env.ROBLOX_COOKIE,
-    UNIVERSE_ID: process.env.UNIVERSE_ID,
+    ROBLOX_GROUP_ID: process.env.ROBLOX_GROUP_ID,
+    ROBLOX_COOKIE: process.env.ROBLOX_COOKIE,
+    ROBLOX_UNIVERSE_ID: process.env.UNIVERSE_ID,
+    
 
     // ✅ API 서버 포트 설정 (기본값: 3000)
     API_PORT: process.env.API_PORT || 3000,
