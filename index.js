@@ -49,8 +49,8 @@ client.once('ready', async () => {
 });
 
 // ✅ MongoDB 연결
-mongoose.connect(mongoURI)
-    .then(() => console.log('✅ MongoDB 연결 성공!'))
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('✅ MongoDB 연결 성공'))
     .catch(err => console.error('❌ MongoDB 연결 실패:', err));
 
 // ✅ API 서버 시작
@@ -60,15 +60,21 @@ app.use(express.json());
 // API - 잔액 지급
 app.post('/give-money', async (req, res) => {
     const { username, amount } = req.body;
-    const user = await RobloxUser.findOne({ robloxUsername: username });
-    if (!user) return res.status(404).send('유저 없음');
 
-    user.balance += amount;
-    await user.save();
-    res.send('성공');
+    try {
+        const user = await RobloxUser.findOne({ robloxUsername: username });
+        if (!user) return res.status(404).send('유저 없음');
+
+        user.balance += amount;
+        await user.save();
+        res.send('성공');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('서버 오류');
+    }
 });
 
-// API - 잔액 조회
+// API - 잔액 조회 (선택적)
 app.get('/get-balance/:username', async (req, res) => {
     const user = await RobloxUser.findOne({ robloxUsername: req.params.username });
     if (!user) return res.status(404).send('유저 없음');
@@ -76,8 +82,9 @@ app.get('/get-balance/:username', async (req, res) => {
     res.json({ balance: user.balance });
 });
 
-app.listen(API_PORT, () => {
-    console.log(`🌐 API 서버 실행 중: http://localhost:${API_PORT}`);
+const PORT = process.env.API_PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🌐 API 서버 실행 중: http://localhost:${PORT}`);
 });
 
 // ✅ 봇 로그인
