@@ -36,7 +36,7 @@ for (const file of eventFiles) {
     }
 }
 
-const { loginToRoblox } = require('./utils/roblox');
+const loginToRoblox = require('./utils/roblox.js');
 
 client.once('ready', async () => {
     console.log(`✅ ${client.user.tag} 봇이 온라인입니다!`);
