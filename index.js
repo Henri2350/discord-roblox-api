@@ -1,4 +1,5 @@
 require('dotenv').config(); // 이거 먼저 있어야 함!
+const { loginToRoblox } = require('./roblox');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
